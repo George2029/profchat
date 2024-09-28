@@ -113,4 +113,16 @@ type CreateUserDto = {
   language_code: string;
 };
 
-//#endregion
+type Button = {
+  text: Record<SupportedLanguage, string>;
+  web_app?: { url: string };
+  callback_data?: string;
+  url?: string;
+};
+
+type SupportedLanguage = 'en' | 'ru';
+type SupportedButtons = 'professor' | 'student' | 'report_bug' | 'feedback';
+
+type Buttons = Record<SupportedButtons, Button>;
+
+type Keyboard = Button[][];

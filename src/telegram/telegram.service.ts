@@ -1,7 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { LogService } from 'src/log/log.service';
-import { TELEGRAM_REQUEST } from 'src/constants';
+import { TELEGRAM_REQUEST, TELEGRAM_CALLBACK_QUERY_DATA } from 'src/constants';
 import { UsersService } from 'src/users/users.service';
+import { get_keyboards } from './keyboards';
+import { get_texts, Text } from './texts';
 
 @Injectable()
 export class TelegramService {
@@ -49,6 +51,41 @@ export class TelegramService {
 
       db_user = await this.usersService.createUser(create_user_dto);
     }
+
+    switch (text) {
+      case '/help':
+      case '/start':
+        let command = text.slice(1) as Text;
+        return this.sendMessage(
+          get_texts(command, user.language_code),
+          user.id,
+          {
+            reply_markup: {
+              inline_keyboard: get_keyboards(command, user.language_code),
+            },
+          },
+        );
+    }
+
+    let callback = callback_query?.data;
+    if (callback && callback in TELEGRAM_CALLBACK_QUERY_DATA) {
+      switch (callback) {
+        case TELEGRAM_CALLBACK_QUERY_DATA.professor:
+        case TELEGRAM_CALLBACK_QUERY_DATA.student:
+          return this.sendMessage(
+            get_texts(callback, user.language_code),
+            user.id,
+            {
+              reply_markup: {
+                inline_keyboard: get_keyboards(callback, user.language_code),
+              },
+            },
+          );
+      }
+    }
+
+    let { is_professor, faculty } = db_user;
+
     return this.sendMessage(`hello there. you said ${text}`, user.id);
   }
 

@@ -14,6 +14,8 @@ export interface UsersAttributes {
   first_name?: string;
   last_name?: string;
   language_code?: string;
+  is_professor?: boolean;
+  faculty?: string;
   created_at?: Date;
 }
 
@@ -41,6 +43,12 @@ export class Users
     defaultValue: Sequelize.literal("'en'::character varying"),
   })
   language_code?: string;
+
+  @Column({ allowNull: true, type: DataType.BOOLEAN })
+  is_professor?: boolean;
+
+  @Column({ allowNull: true, type: DataType.STRING(255) })
+  faculty?: string;
 
   @Column({
     allowNull: true,

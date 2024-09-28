@@ -13,6 +13,7 @@
     "start:prod": "node dist/main",
     "models": "node sequelize/generator",
     "mig:all": "sequelize-cli db:migrate",
+    "unmig:all": "sequelize-cli db:migrate:undo:all",
     "mig": "sequelize-cli db:migrate --name",
     "unmig": "sequelize-cli db:migrate:undo --name"
   },

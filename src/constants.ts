@@ -1,5 +1,17 @@
 export const USERS_MODEL = 'USERS_MODEL' as const;
+export enum SOCIALS {
+  manager = 'https://t.me/kasparov777',
+}
+export enum TELEGRAM_CALLBACK_QUERY_DATA {
+  professor = 'professor',
+  student = 'student',
+}
 export const TELEGRAM_REQUEST = 'TELEGRAM_REQUEST';
+export enum REQUEST_STATUS {
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  PENDING = 'PENDING',
+}
 export enum CONSOLE_COLORS {
   Reset = '\x1b[0m',
   Bright = '\x1b[1m',
