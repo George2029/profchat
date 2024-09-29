@@ -1,4 +1,5 @@
 import { TELEGRAM_REQUEST } from '../constants';
+import { BadRequestException } from '@nestjs/common';
 import { LogService } from '../log/log.service';
 
 export const telegramProviders = [
@@ -12,6 +13,7 @@ export const telegramProviders = [
         config: Omit<RequestInit, 'body' | 'method'> = {},
       ) => {
         try {
+          //logService.log('body', body);
           const res = await fetch(
             `https://api.telegram.org/bot${process.env.BOT_TOKEN}/${method}`,
             {
@@ -25,12 +27,14 @@ export const telegramProviders = [
             },
           );
           if (!res.ok) {
-            logService.err('telegram', await res.json());
+            let msg = await res.json();
+            logService.err('telegram', msg);
+            throw new BadRequestException(msg);
           }
           return res;
         } catch (err) {
           logService.err('telegramRequest', err);
-          return err;
+          throw err;
         }
       },
     inject: [LogService],

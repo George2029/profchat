@@ -1,5 +1,5 @@
 declare namespace NodeJS {
-  export interface ProcessEnv extends Dict<string> {
+  interface ProcessEnv extends Dict<string> {
     NODE_ENV?: string;
     PORT: string;
     HOST: string;

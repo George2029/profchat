@@ -42,7 +42,7 @@ export class Requests
     allowNull: true,
     defaultValue: Sequelize.literal("'PENDING'::enum_requests_request_status"),
   })
-  request_status?: any;
+  request_status?: RequestStatus;
 
   @Column({
     allowNull: true,

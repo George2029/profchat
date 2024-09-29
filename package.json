@@ -15,7 +15,9 @@
     "mig:all": "sequelize-cli db:migrate",
     "unmig:all": "sequelize-cli db:migrate:undo:all",
     "mig": "sequelize-cli db:migrate --name",
-    "unmig": "sequelize-cli db:migrate:undo --name"
+    "unmig": "sequelize-cli db:migrate:undo --name",
+    "seed:all": "sequelize-cli db:seed:all",
+    "stg": "stg --help"
   },
   "dependencies": {
     "@fastify/cookie": "^9.4.0",

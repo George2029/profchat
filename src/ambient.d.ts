@@ -59,7 +59,7 @@ type BotUser = {
   last_name?: string;
   username?: string;
   language_code: string;
-  is_premium: boolean;
+  is_premium?: true;
 };
 type Entity = {
   type: EntityType;
@@ -113,16 +113,28 @@ type CreateUserDto = {
   language_code: string;
 };
 
+type TelegramAllCallbacks = import("src/constants").TelegramAllCallbacks;
+type SupportedLanguage = 'en' | 'ru';
+
 type Button = {
   text: Record<SupportedLanguage, string>;
   web_app?: { url: string };
-  callback_data?: string;
+  callback_data?: TelegramAllCallbacks;
   url?: string;
 };
 
-type SupportedLanguage = 'en' | 'ru';
-type SupportedButtons = 'professor' | 'student' | 'report_bug' | 'feedback';
+type FacultyChoices = import("src/constants").TelegramFacultyCallbacks;
+
+type SupportChoices = 'report_bug' | 'feedback';
+type SupportedButtons = SupportChoices | TelegramAllCallbacks;
+
+type FacultyCallbacks = Record<
+  SupportedLanguage,
+  Record<FacultyChoices, string>
+>;
 
 type Buttons = Record<SupportedButtons, Button>;
 
 type Keyboard = Button[][];
+
+type RequestStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED';
