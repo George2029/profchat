@@ -12,7 +12,9 @@ export interface RequestsAttributes {
   id?: number;
   professor_id?: string;
   student_id?: string;
-  request_status?: any;
+  student_comment?: string;
+  professor_comment?: string;
+  request_status?: RequestStatus;
   created_at?: Date;
 }
 
@@ -37,6 +39,12 @@ export class Requests
   @Column({ allowNull: true, type: DataType.BIGINT })
   @Index({ name: 'requests_student_id', using: 'btree', unique: false })
   student_id?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(255) })
+  student_comment?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(255) })
+  professor_comment?: string;
 
   @Column({
     allowNull: true,

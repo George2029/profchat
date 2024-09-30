@@ -1,5 +1,5 @@
-import { USERS_MODEL, REQUESTS_MODEL, TIME_SLOTS_MODEL } from 'src/constants';
-import { Users, TimeSlots, Requests } from './models';
+import { USERS_MODEL, REQUESTS_MODEL, TIME_SLOTS_MODEL, SUBSCRIPTIONS_MODEL } from 'src/constants';
+import { Users, TimeSlots, Requests, Subscriptions } from './models';
 
 export const database_providers = [
   {
@@ -14,4 +14,8 @@ export const database_providers = [
     useFactory: () => Requests,
     provide: REQUESTS_MODEL,
   },
+   { 
+     useFactory: () => Subscriptions,
+     provide: SUBSCRIPTIONS_MODEL,
+   }
 ];

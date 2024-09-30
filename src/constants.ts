@@ -1,6 +1,42 @@
 export const USERS_MODEL = 'USERS_MODEL' as const;
 export const TIME_SLOTS_MODEL = 'TIME_SLOTS_MODEL' as const;
 export const REQUESTS_MODEL = 'REQUESTS_MODEL';
+export const SUBSCRIPTIONS_MODEL = 'SUBSCRIPTIONS_MODEL';
+export const ITEMS_LIMIT = 8;
+export const MAXIMUM_TEXT_LENGTH_LIMIT = 300;
+export const ITEMS_IN_ROW = 2;
+export const SUPPORT_USER_ID = 281885635;
+export const BUTTON_TEXT_MAX_LENGTH = 30;
+export const BOT_COMMANDS = [
+  {
+    command: 'start',
+    description: 'start',
+  },
+  {
+    command: 'menu',
+    description: 'menu',
+  },
+  {
+    command: 'help',
+    description: 'help',
+  },
+];
+
+export const REGULAR_EXPRESSIONS = {
+  list_requests: /^list_requests_(\d+)/,
+  request_professor_reply: /^#(\d+).*/,
+  professor_request: /^professor_request_(\d+)/,
+  list_professors: /^list_professors_(\d+)$/,
+  open_professor: /^open_professor_(\d+)$/,
+  open_request: /^open_request_(\d+)$/,
+  professor_decision: /^(accept|reject)_(\d+)$/,
+  broadcast: /^broadcast:(\d+)/,
+  time_slot_reply: /^#TS.*/,
+  professor_subscribe: /^professor_subscribe_(\d+)$/,
+  professor_unsubscribe: /^professor_unsubscribe_(\d+)$/,
+  list_professor_slots: /^list_professor_slots_(\d+)_(\d+)$/,
+  book_professor_id_slot_id: /^book_slot_(\d+)_(\d+)$/,
+};
 
 export enum SOCIALS {
   manager = 'https://t.me/kasparov777',
@@ -46,8 +82,10 @@ export const faculties: FacultyCallbacks = {
 } as const;
 
 export enum TELEGRAM_VARIOUS_CALLBACKS {
+  professors = 'professors',
   professor = 'professor',
   student = 'student',
+  set_time_slot = 'set_time_slot',
 
   menu = 'menu',
   faculty_first_page = 'faculty_first_page',
@@ -57,6 +95,7 @@ export enum TELEGRAM_VARIOUS_CALLBACKS {
 
   book = 'book',
   broadcast = 'broadcast',
+  subscribe = 'subscribe',
   language = 'language',
   faculty = 'faculty',
 
@@ -147,3 +186,9 @@ export const LOGGING_CONFIG = {
     );
   },
 } as const;
+
+export enum REQUEST_STATUS {
+  'ACCEPTED' = 'ACCEPTED',
+  'REJECTED' = 'REJECTED',
+  'PENDING' = 'PENDING',
+}

@@ -1,11 +1,10 @@
 'use strict';
-const { users, time_slots, requests } = require('../relations');
-//const { REQUEST_STATUS } = require(
+const { users, subscriptions } = require('../relations');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable(requests, {
+    await queryInterface.createTable(subscriptions, {
       id: {
         allowNull: false,
         primaryKey: true,
@@ -23,19 +22,6 @@ module.exports = {
         type: Sequelize.BIGINT,
         references: { model: users },
       },
-      student_comment: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      professor_comment: {
-        allowNull: true,
-        type: Sequelize.STRING,
-      },
-      request_status: {
-        allowNull: false,
-        type: Sequelize.ENUM(['ACCEPTED', 'REJECTED', 'PENDING']),
-        defaultValue: 'PENDING',
-      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -43,10 +29,11 @@ module.exports = {
       },
     });
 
-    await queryInterface.addIndex(requests, ['professor_id']);
-    await queryInterface.addIndex(requests, ['student_id']);
+    await queryInterface.addIndex(subscriptions, ['professor_id']);
+    await queryInterface.addIndex(subscriptions, ['student_id']);
+    await queryInterface.addIndex(subscriptions, ['student_id', 'professor_id'], {unique: true});
   },
   async down(queryInterface) {
-    await queryInterface.dropTable(requests);
+    await queryInterface.dropTable(subscriptions);
   },
 };

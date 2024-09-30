@@ -25,6 +25,27 @@ let faculty_buttons_object = Object.fromEntries<Button>(
 ) as Record<FacultyChoices, Button>;
 
 export const buttons: Buttons = {
+  set_time_slot: {
+    text: {
+      en: 'Set a time slot',
+      ru: 'Обозначить окно',
+    },
+    callback_data: TELEGRAM_VARIOUS_CALLBACKS.set_time_slot,
+  },
+  professors: {
+    text: {
+      en: 'Professors',
+      ru: 'Преподаватели'
+    },
+    callback_data: TELEGRAM_VARIOUS_CALLBACKS.professors,
+  },
+  subscribe: {
+    text: {
+      en: 'Subscribe',
+      ru: 'Подписаться',
+    },
+    callback_data: TELEGRAM_VARIOUS_CALLBACKS.subscribe,
+  },
   professor: {
     text: {
       en: 'Professor',
@@ -83,8 +104,8 @@ export const buttons: Buttons = {
   },
   request: {
     text: {
-      en: '📝 Request',
-      ru: '📝 Запрос',
+      en: '📝 New request',
+      ru: '📝 Новый запрос',
     },
     callback_data: TELEGRAM_VARIOUS_CALLBACKS.request,
   },

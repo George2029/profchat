@@ -5,6 +5,7 @@ import { faculty_first_page } from './faculty';
 import { faculty_second_page } from './faculty_second_page';
 import { professor_menu } from './professor_menu';
 import { student_menu } from './student_menu';
+import { menu } from './menu';
 
 const keyboards = {
   start,
@@ -14,6 +15,7 @@ const keyboards = {
   professor_menu,
   faculty_first_page,
   faculty_second_page,
+  menu,
 };
 
 export type SendingKeyboard = keyof typeof keyboards;

@@ -1,5 +1,5 @@
 export const error = {
-  en: `<b>Something went wrong! Please report it to manager</b>`,
+  en: `<b>Something went wrong!</b>`,
 
-  ru: `<b>Что-то пошло не так. Сообщите об ошибке по любой из этих кнопок</b>`,
+  ru: `<b>Что-то пошло не так!</b>`,
 };

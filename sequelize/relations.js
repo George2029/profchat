@@ -3,4 +3,5 @@ module.exports = {
   time_slots: 'time_slots',
   requests: 'requests',
   faculties: 'faculties',
+  subscriptions: 'subscriptions',
 };

@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Users, UsersAttributes } from 'src/database/models';
+import { Users } from 'src/database/models';
+import { FindOptions } from 'sequelize';
 import { USERS_MODEL } from 'src/constants';
 import { LogService } from 'src/log/log.service';
 
@@ -10,6 +11,16 @@ export class UsersService {
     private readonly usersModel: typeof Users,
     private readonly logService: LogService,
   ) {}
+
+  getUsers(options: FindOptions<Users>): Promise<UsersAttributes[]> {
+    return this.usersModel.findAll({ ...options, raw: true });
+  }
+
+  getUsersAndCount(
+    options: FindOptions<Users>,
+  ): Promise<{ rows: UsersAttributes[]; count: number }> {
+    return this.usersModel.findAndCountAll({ ...options, raw: true });
+  }
 
   getUser(id: string | number): Promise<UsersAttributes | null> {
     return this.usersModel.findByPk(id, { raw: true });
