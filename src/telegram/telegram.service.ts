@@ -644,12 +644,18 @@ export class TelegramService {
       },
     );
   }
-  async resolveRequests(user: UsersAttributes, message_id: number, callback?: string, ) {
+  async resolveRequests(
+    user: UsersAttributes,
+    message_id: number,
+    callback?: string,
+  ) {
     let page_number: number;
     if (!callback) {
       page_number = 1;
     } else {
-      let [,page_number_str] =callback.match(REGULAR_EXPRESSIONS.list_requests) as RegExpMatchArray;
+      let [, page_number_str] = callback.match(
+        REGULAR_EXPRESSIONS.list_requests,
+      ) as RegExpMatchArray;
       page_number = +page_number_str;
     }
 
@@ -658,62 +664,60 @@ export class TelegramService {
         ? `Нажмите, чтобы открыть запрос`
         : `Click to open the request`;
 
-    let { rows: requests_data, count } =
-      await this.requestsService.getRequests(user.is_professor ? {professor_id: user.id } : {student_id: user.id}, page_number);
+    let { rows: requests_data, count } = await this.requestsService.getRequests(
+      user.is_professor ? { professor_id: user.id } : { student_id: user.id },
+      page_number,
+    );
     this.logService.log(`requestsData:`, requests_data);
 
     if (!count) {
       if (page_number > 1) {
         this.editMessageReplyMarkup(message_id, user.id, {
           reply_markup: {
-            inline_keyboard: [[
-              {
-                text: get_texts('back', user.language_code), 
-                callback_data: `list_requests_${page_number-1}`
-              }
-            ]]
-          }
+            inline_keyboard: [
+              [
+                {
+                  text: get_texts('back', user.language_code),
+                  callback_data: `list_requests_${page_number - 1}`,
+                },
+              ],
+            ],
+          },
         });
       }
     }
-    let requests_buttons: CustomCallbackButton[] =
-      requests_data.map(
-        ({ id, student_comment }: StudentRequestsAttributes) => ({
-          text: student_comment.slice(0, 15),
-          callback_data: `open_request_${id}`,
-        }),
-      );
-      this.logService.log(`requests_buttons`, requests_buttons);
-      let exists_more_student_requests_data = count > ITEMS_LIMIT * page_number;
+    let requests_buttons: CustomCallbackButton[] = requests_data.map(
+      ({ id, student_comment }: StudentRequestsAttributes) => ({
+        text: student_comment.slice(0, 15),
+        callback_data: `open_request_${id}`,
+      }),
+    );
+    this.logService.log(`requests_buttons`, requests_buttons);
+    let exists_more_student_requests_data = count > ITEMS_LIMIT * page_number;
     if (exists_more_student_requests_data) {
       requests_buttons.push({
         text: get_texts('more', user.language_code),
-        callback_data: `list_requests_${page_number+1}`,
+        callback_data: `list_requests_${page_number + 1}`,
       });
     } else {
-      if (page_number !== 1) 
+      if (page_number !== 1)
         requests_buttons.push({
           text: get_texts('back', user.language_code),
-          callback_data: `list_requests_${page_number-1}`,
+          callback_data: `list_requests_${page_number - 1}`,
         });
     }
 
     let requests_keyboard: CustomKeyboard = [];
     this.logService.log(`requests_keyboard:`, requests_keyboard);
 
-    for (
-      let i = 0;
-      i < requests_buttons.length;
-      i = i + ITEMS_IN_ROW
-    ) {
-      let slice = requests_buttons.slice(i, i+ITEMS_IN_ROW);
+    for (let i = 0; i < requests_buttons.length; i = i + ITEMS_IN_ROW) {
+      let slice = requests_buttons.slice(i, i + ITEMS_IN_ROW);
       requests_keyboard.push(slice);
     }
     this.logService.log(`reqeusts_keyboard_before_submit:`, requests_keyboard);
     return this.sendMessage(professor_requests_text, user.id, {
       reply_markup: { inline_keyboard: requests_keyboard },
     });
-
   }
 
   async resolveOpenRequest(
@@ -830,10 +834,10 @@ export class TelegramService {
       start_time = this.parseDate(str1);
       end_time = this.parseDate(str2);
     } catch (err) {
-      this.logService.log(`dates failed to parse`, `${text}`)
+      this.logService.log(`dates failed to parse`, `${text}`);
       return this.sendMessage("parser didn't recognize the dates.", user.id);
     }
-    if (isNaN(start_time.getTime()) || isNaN(end_time.getTime())){
+    if (isNaN(start_time.getTime()) || isNaN(end_time.getTime())) {
       return this.sendMessage("parser didn't recognize the dates.", user.id);
     }
     await this.timeSlotsService.createTimeSlot(user.id, start_time, end_time);
@@ -946,7 +950,7 @@ export class TelegramService {
     let resolve_subscribe_text =
       user.language_code === 'ru'
         ? 'Вы подписались'
-        : 'Successfully unsubscribed!';
+        : 'Successfully subscribed!';
     await this.subscriptionsService.subscribe(user.id, professor_id);
     return this.sendMessage(resolve_subscribe_text, user.id, {
       reply_markup: {
@@ -959,13 +963,14 @@ export class TelegramService {
     let eng_message = `Respond to this message by editing placeholder, according to the following format: yy/MM/dd HH:mm - yy/MM/dd HH:mm`;
     let ru_message = `#TS.\n\nОтветьте на это сообщение, редактируя помещенный текст согласно формате yy/MM/dd HH:mm - yy/MM/dd HH:mm`;
     let reply_text = `#TS.\n`;
-    let input_field_placeholder = this.getDate(new Date()) + ' - ' + this.getDate(new Date());
+    let input_field_placeholder =
+      this.getDate(new Date()) + ' - ' + this.getDate(new Date());
     reply_text += user.languag_code === 'ru' ? ru_message : eng_message;
-    reply_text += '\n\n'+input_field_placeholder;
+    reply_text += '\n\n' + input_field_placeholder;
     return this.sendMessage(reply_text, user.id, {
       reply_markup: {
         force_reply: true,
-        input_field_placeholder
+        input_field_placeholder,
       },
     });
   }
@@ -982,67 +987,86 @@ export class TelegramService {
   }
 
   async bookSlot(user: UsersAttributes, callback: string) {
-    let [, professor_id, slot_id] = callback.match(REGULAR_EXPRESSIONS.book_professor_id_slot_id) as RegExpMatchArray;
-    let {start_time, end_time} = await this.timeSlotsService.book(user.id, slot_id)
+    let [, professor_id, slot_id] = callback.match(
+      REGULAR_EXPRESSIONS.book_professor_id_slot_id,
+    ) as RegExpMatchArray;
+    let { start_time, end_time } = await this.timeSlotsService.book(
+      user.id,
+      slot_id,
+    );
     let student_name = this.resolveName(user);
     let text = `${student_name} booked a time slot:\n\n${this.getDate(start_time)} - ${this.getDate(end_time)}`;
     await Promise.all([
-      this.sendMessage(get_texts('success', user.language_code), user.id), 
-      this.sendMessage(text, professor_id) 
-    ])
-
+      this.sendMessage(get_texts('success', user.language_code), user.id),
+      this.sendMessage(text, professor_id),
+    ]);
   }
 
   async listProfessorSlots(user: UsersAttributes, callback: string) {
-    let [,professor_id, page_number_str] = callback.match(REGULAR_EXPRESSIONS.list_professor_slots) as RegExpMatchArray;
-    let page_number= +page_number_str;
+    let [, professor_id, page_number_str] = callback.match(
+      REGULAR_EXPRESSIONS.list_professor_slots,
+    ) as RegExpMatchArray;
+    let page_number = +page_number_str;
 
-    let {rows: time_slots, count} = await this.timeSlotsService.findAndCountAll({professor_id, page_number: +page_number});
+    let { rows: time_slots, count } =
+      await this.timeSlotsService.findAndCountAll({
+        professor_id,
+        page_number: +page_number,
+      });
 
     if (!count) {
-      let text = user.language_code === 'ru' ? 
-        'У этого профессора нет свободных окон пока что...' : 
-        'this professor has no slots available so far...';
+      let text =
+        user.language_code === 'ru'
+          ? 'У этого профессора нет свободных окон пока что...'
+          : 'this professor has no slots available so far...';
       return this.sendMessage(text, user.id, {
         reply_markup: {
-          inline_keyboard: [[
-            {
-              text: get_texts('back', user.language_code), 
-              callback_data: 'open_professor_'+professor_id
-            }
-          ]]
-        }
+          inline_keyboard: [
+            [
+              {
+                text: get_texts('back', user.language_code),
+                callback_data: 'open_professor_' + professor_id,
+              },
+            ],
+          ],
+        },
       });
     }
-    let text = user.language_code === 'ru' ? 'Выбери слот для брони' : 'Choose the slot to book';
+    let text =
+      user.language_code === 'ru'
+        ? 'Выбери слот для брони'
+        : 'Choose the slot to book';
 
     let exists_more_slots = count > +page_number * ITEMS_LIMIT;
 
+    let time_slots_buttons: CustomCallbackButton[][] = time_slots.map(
+      ({ id, start_time, end_time }: TimeSlots) => [
+        {
+          text: this.getDate(start_time) + ' - ' + this.getDate(end_time),
+          callback_data: `book_slot_${professor_id}_${id}`,
+        },
+      ],
+    );
 
-      let time_slots_buttons: CustomCallbackButton[][] =
-        time_slots.map(
-          ({ id, start_time, end_time }: TimeSlots) => ([{
-            text: this.getDate(start_time) + ' - ' + this.getDate(end_time),
-            callback_data: `book_slot_${professor_id}_${id}`,
-          }]),
-        );
-
-      if (exists_more_slots) {
-        time_slots_buttons.push([{
+    if (exists_more_slots) {
+      time_slots_buttons.push([
+        {
           text: get_texts('more', user.language_code),
-          callback_data: `list_professor_slots_${professor_id}_${page_number +1}`,
-        }]);
-      } else {
-        if (page_number !==1 ) time_slots_buttons.push([{
-          text: get_texts('back', user.language_code),
-          callback_data: `list_professor_slots_${professor_id}_${page_number -1}`,
-        }]);
-      }
+          callback_data: `list_professor_slots_${professor_id}_${page_number + 1}`,
+        },
+      ]);
+    } else {
+      if (page_number !== 1)
+        time_slots_buttons.push([
+          {
+            text: get_texts('back', user.language_code),
+            callback_data: `list_professor_slots_${professor_id}_${page_number - 1}`,
+          },
+        ]);
+    }
 
-      return this.sendMessage(text, user.id, {
-        reply_markup: { inline_keyboard: time_slots_buttons },
-      });
-    
-
+    return this.sendMessage(text, user.id, {
+      reply_markup: { inline_keyboard: time_slots_buttons },
+    });
   }
 }
