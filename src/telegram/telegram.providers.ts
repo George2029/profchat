@@ -29,12 +29,10 @@ export const telegramProviders = [
           if (!res.ok) {
             let msg = await res.json();
             logService.err('telegram', msg);
-            throw new BadRequestException(msg);
           }
           return res;
         } catch (err) {
           logService.err('telegramRequest', err);
-          throw err;
         }
       },
     inject: [LogService],
